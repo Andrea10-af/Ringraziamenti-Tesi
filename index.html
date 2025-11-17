@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ringraziamenti - Accesso</title>
+<style>
+  :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  body{display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:linear-gradient(180deg,#f7f9fc,#eef4fb);}
+  .card{width:100%;max-width:720px;background:white;border-radius:12px;box-shadow:0 8px 30px rgba(20,30,60,0.08);padding:28px;}
+  h1{margin:0 0 6px;font-size:1.4rem;}
+  p.lead{margin:0 0 18px;color:#555;}
+  .flex{display:flex;gap:10px;align-items:center;}
+  input[type="password"]{flex:1;padding:10px 12px;border-radius:8px;border:1px solid #ddd;font-size:1rem;}
+  button{padding:10px 14px;border-radius:8px;border:none;background:#2b6df6;color:white;font-weight:600;cursor:pointer;}
+  #risposta{margin-top:18px;padding:14px;border-radius:8px;background:#fbfdff;border:1px solid #eef3ff;min-height:72px}
+  .hidden{display:none}
+  .small{font-size:0.9rem;color:#666}
+  footer{margin-top:14px;font-size:0.8rem;color:#999;text-align:right}
+  @media (max-width:480px){.card{padding:18px}}
+</style>
+</head>
+<body>
+<div class="card" role="main">
+  <h1>Ringraziamenti segreti</h1>
+  <p class="lead">Inserisci la password ricevuta per vedere il tuo messaggio personale.</p>
+
+  <div class="flex" aria-hidden="false">
+    <input id="pwd" type="password" placeholder="Inserisci la password">
+    <button id="btn">Apri</button>
+  </div>
+
+  <div id="risposta" aria-live="polite"></div>
+
+  <p class="small">Suggerimento: le password sono case-sensitive (ma puoi modificarlo nel file).</p>
+  <footer>Creato per la tesi • Puoi condividere questo link tramite QR code</footer>
+</div>
+
+<script>
+/* ---------- CONFIGURAZIONE: inserisci qui le password e i testi ---------- */
+/* formato: "password": "Testo del ringraziamento (HTML consentito)", */
+const MESSAGES = {
+  "prof123": "<h3>Al Prof. Rossi</h3><p>Grazie Professore Rossi per avermi guidato con pazienza e rigore scientifico durante tutto il percorso.</p>",
+  "mamma2025": "<h3>Mamma</h3><p>Mamma, grazie per il supporto incondizionato, i sacrifici e l'amore senza confini.</p>",
+  "amici": "<h3>Agli amici</h3><p>Grazie ai miei amici per le risate, gli appunti condivisi e le notti passate a studiare insieme.</p>",
+  "relatore": "<h3>Al Relatore</h3><p>Grazie al mio relatore per la disponibilità, i consigli pratici e l'incoraggiamento.</p>"
+};
+/* ---------------------------------------------------------------------- */
+
+const btn = document.getElementById('btn');
+const pwdInput = document.getElementById('pwd');
+const out = document.getElementById('risposta');
+
+function showMessage(html){
+  out.innerHTML = html;
+}
+
+function check(){
+  const p = pwdInput.value || "";
+  // confronto case-insensitive? se vuoi abilitalo qui:
+  // const key = p.trim().toLowerCase();
+  const key = p.trim();
+  if(!key){
+    showMessage("<em>Inserisci una password.</em>");
+    return;
+  }
+  if(MESSAGES.hasOwnProperty(key)){
+    showMessage(MESSAGES[key]);
+    // svuota campo (opzionale)
+    pwdInput.value = "";
+  } else {
+    showMessage("<strong>Password errata.</strong> Riprovare.");
+  }
+}
+
+// tasto invio funziona
+pwdInput.addEventListener('keydown', function(e){
+  if(e.key === "Enter") check();
+});
+btn.addEventListener('click', check);
+
+// Opzionale: supporto per param ?pwd=...
+(function(){
+  const urlParams = new URLSearchParams(window.location.search);
+  const p = urlParams.get('pwd');
+  if(p){
+    pwdInput.value = p;
+    check();
+  }
+})();
+</script>
+</body>
+</html>
